@@ -1,9 +1,12 @@
 import torch
-from torch import Tensor
 import torch.nn as nn
-from typing import *
+from torch import Tensor
+
 import timm
+from typing import *
 from transformers import AutoTokenizer, AutoModelForCausalLM
+
+from src.configs.model_configs import model_configs
 
 
 class MLP(nn.Module):
@@ -38,29 +41,20 @@ class MLP(nn.Module):
 
 
 def load_llm(llm_name, device):
-    supported_llms_map = {
-        "llama-3.2-1b": "meta/Llama-3.2-1B",
-        "phi-3": "microsoft/phi-3",
-        "gemma-2": "google/gemma-2"
-    }
-    if llm_name not in supported_llms_map:
+    if llm_name not in model_configs.supported_llms_map:
         raise KeyError("The LLM name you provided is not supported.")
 
-    llm_id = supported_llms_map[llm_name]
+    llm_id = model_configs.supported_llms_map[llm_name]
     tokenizer = AutoTokenizer.from_pretrained(llm_id)
     model = AutoModelForCausalLM.from_pretrained(llm_id, device_map=device)
     return model, tokenizer
 
 
 def load_vision_tower(vision_tower_name, device):
-    supported_vision_towers_map = {
-        "clip_vit_b16": "vit_base_patch16_224_clip.openai",
-        "siglip_vit_l14": "vit_large_patch14_siglip.google",
-    }
-    if vision_tower_name not in supported_vision_towers_map:
+    if vision_tower_name not in model_configs.supported_vision_towers_map:
         raise KeyError("The vision tower name you provided is not supported.")
 
-    vision_tower_id = supported_vision_towers_map[vision_tower_name]
+    vision_tower_id = model_configs.supported_vision_towers_map[vision_tower_name]
     model = timm.create_model(vision_tower_id, pretrained=True, num_classes=0)
     model = model.to(device)
     transform = None

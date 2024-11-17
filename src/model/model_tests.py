@@ -5,7 +5,7 @@ from absl.testing import parameterized
 from src.model.mllm import MLLM
 
 
-class TestsForMLLM(parameterized.TestCase):
+class TestingMLLM(parameterized.TestCase):
     @classmethod
     def __init__(self):
         self.batch_size = 4
