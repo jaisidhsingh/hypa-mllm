@@ -4,36 +4,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from typing import *
 
-
-class MLP(nn.Module):
-	def __init__(
-        self, 
-        input_dim: int, 
-        intermediate_dims: List[int], 
-        output_dim: int, 
-        use_bias: bool = True
-    ) -> None:
-		super().__init__()
-		self.input_dim = input_dim
-		self.intermediate_dims = intermediate_dims
-		self.output_dim = output_dim
-		self.num_layers = len(intermediate_dims) + 1
-
-		self.layers = []
-		current_dim = input_dim
-		next_dims = intermediate_dims + [output_dim]
-
-		for i in range(self.num_layers):
-			self.layers.append(nn.Linear(current_dim, next_dims[i], bias=use_bias))
-			current_dim = next_dims[i]
-
-			if i != self.num_layers - 1:
-				self.layers.append(nn.GELU())
-
-		self.layers = nn.Sequential(*self.layers)
-
-	def forward(self, x: Tensor) -> Tensor:
-		return self.layers(x)
+from src.model.model_utils import MLP
 		
 
 class HyperNetwork(nn.Module):
