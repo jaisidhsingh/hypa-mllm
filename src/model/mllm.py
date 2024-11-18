@@ -21,7 +21,8 @@ class MLLM(nn.Module):
         self.device = device
         self.llm, self.tokenizer = load_llm(llm, device=self.device)
 
-        self.vision_tower, self.image_transform = load_vision_tower(vision_tower, self.device)
+        self.vision_tower, self.image_transform, self.vision_tower_config = load_vision_tower(vision_tower, self.device)
+        self.num_patches = self.get_num_patches_for_vision_tower()
 
         vision_tower_dim = self.vision_tower.embed_dim
         llm_dim = self.llm.config.hidden_size
@@ -32,8 +33,13 @@ class MLLM(nn.Module):
         self.modules_to_freeze = modules_to_freeze
         self.freeze_modules()
         self.set_trainable_modules()
-
     
+    @torch.no_grad()
+    def get_num_patches_for_vision_tower(self):
+        image = torch.randn(1, *self.vision_tower_config["input_size"])
+        features = self.vision_tower.forward_features(image)
+        return features.shape[1]
+
     def freeze_modules(self) -> None:
         for module in self.modules_to_freeze:
             if hasattr(self, module):

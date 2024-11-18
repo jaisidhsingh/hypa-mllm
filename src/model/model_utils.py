@@ -58,7 +58,7 @@ def load_vision_tower(vision_tower_name, device):
     model = timm.create_model(vision_tower_id, pretrained=True, num_classes=0).to(device)
     config = timm.data.resolve_model_data_config(model)
     transform = timm.data.create_transform(**config, is_training=False)
-    return model, transform
+    return model, transform, config
 
 
 def load_connector(connector_type, vision_tower_dim, llm_dim, hidden_dims, device):
