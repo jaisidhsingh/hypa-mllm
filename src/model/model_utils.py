@@ -55,9 +55,9 @@ def load_vision_tower(vision_tower_name, device):
         raise KeyError("The vision tower name you provided is not supported.")
 
     vision_tower_id = model_configs.supported_vision_towers_map[vision_tower_name]
-    model = timm.create_model(vision_tower_id, pretrained=True, num_classes=0)
-    model = model.to(device)
-    transform = None
+    model = timm.create_model(vision_tower_id, pretrained=True, num_classes=0).to(device)
+    config = timm.data.resolve_model_data_config(model)
+    transform = timm.data.create_transform(**config, is_training=False)
     return model, transform
 
 

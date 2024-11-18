@@ -14,14 +14,16 @@ class MLLM(nn.Module):
         vision_tower: str, 
         connector_type: str, 
         connector_hidden_dims: Optional[List[int]] = [], 
-        modules_to_freeze: Optional[List[str]] = ["vision_tower", "llm"]
+        modules_to_freeze: Optional[List[str]] = ["vision_tower", "llm"],
+        device="cpu"
         ) -> None:
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        super().__init__()
+        self.device = device
         self.llm, self.tokenizer = load_llm(llm, device=self.device)
 
-        self.vision_tower, self.image_transform = load_vision_tower(vision_tower)
+        self.vision_tower, self.image_transform = load_vision_tower(vision_tower, self.device)
 
-        vision_tower_dim = self.vision_tower.config.dim
+        vision_tower_dim = self.vision_tower.embed_dim
         llm_dim = self.llm.config.hidden_size
 
         self.connector = load_connector(connector_type, vision_tower_dim, llm_dim, connector_hidden_dims, self.device)
@@ -50,7 +52,7 @@ class MLLM(nn.Module):
     
     def forward(self, text_input_ids: Tensor, images: Tensor, attention_mask: Tensor = None, labels: Tensor = None) -> Dict[str, Tensor]:
         image_features = self.vision_tower.forward_features(images)
-        batch_size, num_patches, _ = image_features.shape[0]
+        batch_size, num_patches, _ = image_features.shape
         projected_image_features = self.connector(image_features)
 
         combined_attention_mask = None
@@ -64,6 +66,8 @@ class MLLM(nn.Module):
         
         text_embeddings = self.llm.get_input_embeddings()(text_input_ids)
         combined_embeddings = torch.cat([projected_image_features, text_embeddings], dim=1)
+
+        print(labels.shape)
 
         outputs = self.llm(
             inputs_embeds=combined_embeddings,
