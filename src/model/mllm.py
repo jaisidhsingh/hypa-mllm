@@ -50,6 +50,21 @@ class MLLM(nn.Module):
         for module in trainable_modules:
             getattr(self, module).train()
     
+    def get_image_features(self, images):
+        image_features = self.vision_tower.forward_features(images)
+        return image_features
+    
+    def connect_vision_tower_to_llm(self, image_features):
+        return self.connector(image_features)
+
+    def forward_embeddings_through_llm(self, input_embeds, attention_mask=None, labels=None):
+        return self.llm(
+            inputs_embeds=input_embeds,
+            attention_mask=attention_mask,
+            labels=labels,
+            return_dict=True
+        )
+    
     def forward(self, text_input_ids: Tensor, images: Tensor, attention_mask: Tensor = None, labels: Tensor = None) -> Dict[str, Tensor]:
         image_features = self.vision_tower.forward_features(images)
         batch_size, num_patches, _ = image_features.shape
@@ -66,8 +81,6 @@ class MLLM(nn.Module):
         
         text_embeddings = self.llm.get_input_embeddings()(text_input_ids)
         combined_embeddings = torch.cat([projected_image_features, text_embeddings], dim=1)
-
-        print(labels.shape)
 
         outputs = self.llm(
             inputs_embeds=combined_embeddings,

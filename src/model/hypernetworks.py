@@ -16,7 +16,7 @@ class HyperNetwork(nn.Module):
         num_cond_embs: int, 
         image_embed_dims: List[int], 
         hidden_layer_factors: List[int], 
-        rescale_factor: Optional[float] = 10.0
+        rescale_factor: Optional[float] = 0.0
     ) -> None:
         super().__init__()
         self.image_embed_dims = image_embed_dims

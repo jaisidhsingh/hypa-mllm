@@ -4,8 +4,8 @@
 
 - [x] Set up repo
 - [x] Set up MLLM modelling
-- [ ] Write `src.model.model_tests.py`
-- [ ] Test `src.model.model_tests.py`
+- [x] Write `src.model.model_tests.py`
+- [x] Test `src.model.model_tests.py`
 - [ ] Write `src.training.trainers.py`
 - [ ] Test `src.training.trainers.py`
 - [ ] Write `src.training.train_mllm.py`
