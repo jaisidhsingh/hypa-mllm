@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 data_configs = SimpleNamespace(**{})
 
-data_configs.global_data_folder = "/home/mila/sparsha.mishra/scratch/tinyllava_pretrain"
+data_configs.global_data_folder = "/home/mila/sparsha.mishra/scratch/tinyllava-pretrain"
 
 data_configs.pretraining_dataset_configs = {
     "image_folder": f"{data_configs.global_data_folder}/tinyllava_558k/images",
