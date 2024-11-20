@@ -23,7 +23,7 @@ model = MLLM(
     vision_tower="vanilla_vit_b16",
     connector_type="linear",
     connector_hidden_dims=[],
-    device="cuda"
+    device="cpu"
 )
 
 
@@ -42,6 +42,7 @@ full_text_ids = full_text_enc.input_ids
 attention_mask = full_text_enc.attention_mask
 
 labels = torch.full((1, model.num_patches+full_text_ids.shape[1]), fill_value=-100, dtype=torch.long)
+print(labels.shape, target_text_ids.shape)
 labels[:, model.num_patches+input_text_ids.shape[1]:] = target_text_ids
 
 output = model(full_text_ids, images, attention_mask, labels)
