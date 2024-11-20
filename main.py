@@ -1,3 +1,10 @@
-from src.model import run_model_unit_tests, HyperNetwork
+from src.configs.data_configs import data_configs
+from src.data.alignment_dataset import FeatureAlignmentDataset
 
-run_model_unit_tests()
+
+dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs)
+
+print(len(dataset))
+sample = dataset[0]
+for item in sample:
+    print(type(item))
