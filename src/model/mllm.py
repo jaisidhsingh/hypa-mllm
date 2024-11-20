@@ -88,6 +88,8 @@ class MLLM(nn.Module):
         text_embeddings = self.llm.get_input_embeddings()(text_input_ids)
         combined_embeddings = torch.cat([projected_image_features, text_embeddings], dim=1)
 
+        print("fine till here.")
+
         outputs = self.llm(
             inputs_embeds=combined_embeddings,
             attention_mask=combined_attention_mask,
