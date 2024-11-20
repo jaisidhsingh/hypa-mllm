@@ -1,5 +1,5 @@
 from src.configs.data_configs import data_configs
-from src.data.alignment_dataset import FeatureAlignmentDataset
+from src.data import FeatureAlignmentDataset
 
 
 dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs)
