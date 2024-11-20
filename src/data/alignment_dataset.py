@@ -27,7 +27,7 @@ class FeatureAlignmentDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image) 
 
-        answer = self.prompts[idx]
+        answer = self.answers[idx]
         prompt = self.prompts[idx]
 
         image_position = prompt.index(self.image_token)
