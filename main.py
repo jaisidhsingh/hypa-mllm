@@ -1,6 +1,9 @@
+from torch.utils.data import DataLoader
 from src.configs.data_configs import data_configs
 from src.data import FeatureAlignmentDataset
-from torch.utils.data import DataLoader
+from src.model import run_model_unit_tests
+
+run_model_unit_tests()
 
 
 dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs)
