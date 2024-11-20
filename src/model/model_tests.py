@@ -13,7 +13,7 @@ class TestingMLLM(parameterized.TestCase):
         self.num_patches = 197
         self.dim = 768
         self.seq_len = 128
-        self.llm = "gpt-2"
+        self.llm = "llama-3.2"
         self.vision_tower = "vanilla_vit_b16"
         self.connector_type = "linear"
         self.modules_to_freeze = ["vision_tower", "llm"]

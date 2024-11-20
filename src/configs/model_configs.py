@@ -13,6 +13,7 @@ model_configs.supported_vision_towers_map = {
 # store llm configs
 model_configs.supported_llms_map = {
     "llama-3.2": "meta-llama/Llama-3.2-1B",
+    "mobilellm": "facebook/MobileLLM-1B",
     "qwen-2.5": "Qwen/Qwen2.5-1.5b",
     "gemma-2": "google/gemma-2-2b",
     "gpt-2": "openai-community/gpt2"
