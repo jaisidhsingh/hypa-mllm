@@ -26,7 +26,7 @@ model = MLLM(
     device="cpu"
 )
 
-
+### THIS DOESN'T WORK WITH LLAMA-3.2B
 images = torch.randn((1, 3, image_size, image_size))
 input_text = "A cat sat on the"
 input_text_enc = model.tokenizer(input_text, return_tensors="pt")
