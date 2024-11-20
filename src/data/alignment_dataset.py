@@ -1,7 +1,10 @@
 import os
 import json
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
+
+from src.configs.tokenizer_configs import tokenizer_configs
 
 
 class FeatureAlignmentDataset(Dataset):
@@ -43,4 +46,42 @@ class FeatureAlignmentDataset(Dataset):
         prompts = [item[1][0] for item in batch]
         answers = [item[1][1] for item in batch]
         image_positions = [item[2] for item in batch]
-        return images, prompts, answers, image_positions
+
+        # if self.tokenizer.pad_token is None:
+        #     self.tokenizer.pad_token = self.tokenizer.eos_token
+        #     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+
+        prompt_ids = self.tokenizer(prompts).input_ids
+
+        if self.tokenizer.pad_token_id == self.tokenizer.eos_token_id:
+            for input_id in prompt_ids:
+                input_id[input_id == self.tokenizer.eos_token_id] = tokenizer_configs.alt_ignore_index
+            
+        prompt_ids = torch.nn.utils.rnn.pad_sequence(
+            prompt_ids,
+            batch_first=True,
+            padding_value=self.tokenizer.pad_token_id
+        )
+        answer_ids = self.tokenizer(answers)
+        answer_ids = torch.nn.utils.rnn.pad_packed_sequence(
+            answer_ids,
+            batch_first=True,
+            padding_value=tokenizer_configs.ignore_index
+        )
+
+        prompt_ids = prompt_ids[:, :self.tokenizer.model_max_length]
+        attention_mask = prompt_ids.ne(self.tokenizer.pad_token_id)
+        answer_ids = answer_ids[:, :self.tokenizer.model_max_length]
+
+        if self.tokenizer.pad_token_id == self.tokenizer.eos_token_id:
+            for input_id in prompt_ids:
+                input_id[input_id == tokenizer_configs.alt_ignore_index] = self.tokenizer.eos_token_id
+        
+        batch = {
+            "input_ids": prompt_ids,
+            "images": torch.stack(images),
+            "attention_mask": attention_mask,
+            "labels": answer_ids,
+            "image_positions": image_positions
+        }
+        return batch
