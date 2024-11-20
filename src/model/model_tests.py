@@ -67,26 +67,26 @@ class TestingMLLM():
     @torch.no_grad()
     def test_hypernetwork(self):
         hypnet_works = False
-        try:
-            param_shapes = [[768, 768], [768]]
-            hypnet = HyperNetwork(
-                param_shapes=param_shapes,
-                cond_emb_dim=8,
-                num_cond_embs=3,
-                image_embed_dims=[768],
-                hidden_layer_factors=[]
-            )
-            print("Hypernetwork initisialised correctly.")
+        # try:
+        param_shapes = [[768, 768], [768]]
+        hypnet = HyperNetwork(
+            param_shapes=param_shapes,
+            cond_emb_dim=8,
+            num_cond_embs=3,
+            image_embed_dims=[768],
+            hidden_layer_factors=[]
+        )
+        print("Hypernetwork initisialised correctly.")
 
-            weights, biases = hypnet([0, 1, 2], 768)
-            hypnet_works = True
+        weights, biases = hypnet([0, 1, 2], 768)
+        hypnet_works = True
 
-            print("Hypernetwork forward pass correctly executed.")
-            print("Obtained params for connects have dims:")
-            print(weights.shape, biases.shape)
+        print("Hypernetwork forward pass correctly executed.")
+        print("Obtained params for connects have dims:")
+        print(weights.shape, biases.shape)
         
-        except:
-            print("Error in hypernetwork.")
+        # except:
+        #     print("Error in hypernetwork.")
         
         # self.assertEqual(hypnet_works, True)
 
