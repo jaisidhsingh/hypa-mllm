@@ -15,7 +15,7 @@ class MLLM(nn.Module):
         connector_type: str, 
         connector_hidden_dims: Optional[List[int]] = [], 
         modules_to_freeze: Optional[List[str]] = ["vision_tower", "llm"],
-        device="cpu"
+        device="cuda"
         ) -> None:
         super().__init__()
         self.device = device
