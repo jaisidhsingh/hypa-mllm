@@ -46,7 +46,7 @@ def load_llm(llm_name, device):
 
     llm_id = model_configs.supported_llms_map[llm_name]
     tokenizer = AutoTokenizer.from_pretrained(llm_id)
-    model = AutoModelForCausalLM.from_pretrained(llm_id, device_map=device, load_in_8bit=True)
+    model = AutoModelForCausalLM.from_pretrained(llm_id, device_map=device)
     return model, tokenizer
 
 
