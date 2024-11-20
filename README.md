@@ -1,5 +1,9 @@
 # Training MLLM with Hyper-Alignment
 
+## Notes
+
+Llama-3.2-1B and Qwen-2.5-1.5B loaded together take 14GB of VRAM.
+
 ## Todos
 
 - [x] Set up repo
