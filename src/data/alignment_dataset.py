@@ -42,6 +42,9 @@ class FeatureAlignmentDataset(Dataset):
         return image, [prompt, answer], image_position
 
     def collate_fn(self, batch):
+        """
+        Reference: https://github.com/TinyLLaVA/TinyLLaVA_Factory/blob/main/tinyllava/data/dataset.py
+        """
         images = [item[0] for item in batch]
         prompts = [item[1][0] for item in batch]
         answers = [item[1][1] for item in batch]
@@ -82,6 +85,6 @@ class FeatureAlignmentDataset(Dataset):
             "images": torch.stack(images),
             "attention_mask": attention_mask,
             "labels": answer_ids,
-            "image_positions": image_positions
+            "image_positions": torch.stack(image_positions)
         }
         return batch
