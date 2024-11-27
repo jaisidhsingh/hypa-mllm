@@ -6,7 +6,7 @@ import torch
 # run_model_unit_tests()
 
 
-dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs)
+dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs["train"])
 loader = DataLoader(dataset, batch_size=4, collate_fn=dataset.collate_fn)
 batch = next(iter(loader))
 
