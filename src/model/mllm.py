@@ -111,6 +111,9 @@ class MLLM(nn.Module):
             projected_image_features[image_last_mask, :, :]
         ], dim=1)
 
+        print(combined_embeddings.shape)
+        print(combined_attention_mask.shape)
+
         # combined_embeddings = torch.where(
         #     image_first_mask.unsqueeze(-1),
         #     torch.cat([projected_image_features, text_embeddings], dim=1),
