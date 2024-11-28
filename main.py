@@ -28,7 +28,7 @@ def main(args):
 
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
     scaler = torch.cuda.amp.GradScaler()
-    autocast = torch.amp.autocast
+    autocast = torch.amp.autocast(args.device)
 
     train_dataset_config = data_configs.pretraining_dataset_configs["train"]
     train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer, "device": args.device})
@@ -39,7 +39,7 @@ def main(args):
     for batch in train_loader:
         optimizer.zero_grad()
 
-        with autocast():
+        with autocast:
             output = model(**batch)
             loss = output.loss
         
