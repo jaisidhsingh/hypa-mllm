@@ -77,10 +77,12 @@ class MLLM(nn.Module):
     def forward(self, input_ids: Tensor, images: Tensor, attention_mask: Tensor = None, labels: Tensor = None, image_positions: Tensor = None) -> Dict[str, Tensor]:
         image_features = self.vision_tower.forward_features(images)
         batch_size, num_patches, _ = image_features.shape
+        seq_len = input_ids.shape[1]
         projected_image_features = self.connector(image_features)
 
         combined_attention_mask = None
         image_first_mask = (image_positions == 0)
+        image_last_mask = (image_positions != 0)
         
         if attention_mask is not None:
             image_attention_mask = torch.ones(
@@ -98,11 +100,22 @@ class MLLM(nn.Module):
         print(text_embeddings.shape)
         print(projected_image_features.shape)
 
-        combined_embeddings = torch.where(
-            image_first_mask.unsqueeze(-1),
-            torch.cat([projected_image_features, text_embeddings], dim=1),
-            torch.cat([text_embeddings, projected_image_features], dim=1)
-        )
+
+        combined_embeddings = torch.zeros((batch_size, num_patches+seq_len, text_embeddings.shape[-1])).to(self.device)
+        combined_embeddings[image_first_mask, :, :] = torch.cat([
+            projected_image_features[image_first_mask, :, :], 
+            text_embeddings[image_first_mask, :, :]
+        ], dim=1)
+        combined_embeddings[image_last_mask, :, :] = torch.cat([
+            text_embeddings[image_last_mask, :, :],
+            projected_image_features[image_last_mask, :, :]
+        ], dim=1)
+
+        # combined_embeddings = torch.where(
+        #     image_first_mask.unsqueeze(-1),
+        #     torch.cat([projected_image_features, text_embeddings], dim=1),
+        #     torch.cat([text_embeddings, projected_image_features], dim=1)
+        # )
 
         outputs = self.llm(
             inputs_embeds=combined_embeddings,
