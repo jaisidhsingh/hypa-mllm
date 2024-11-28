@@ -2,6 +2,7 @@ import os
 import math
 import wandb
 import argparse
+import warnings
 from torch.utils.data import DataLoader
 from transformers import TrainingArguments, Trainer
 
@@ -9,6 +10,7 @@ from src.model import MLLM
 from src.data import FeatureAlignmentDataset
 from src.training.trainers import TrainerForMLLM
 from src.configs.data_configs import data_configs
+warnings.simplefilter("ignore")
 
 
 def main(args):
@@ -27,12 +29,14 @@ def main(args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=train_dataset.collate_fn)
 
     for i in range(4):
+        print(batch["input_ids"])
+        
         batch = next(iter(train_loader))
         output = model(**batch)
         print(output.loss)
         print(output.logits.shape)
     
-    
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
