@@ -54,7 +54,7 @@ class FeatureAlignmentDataset(Dataset):
         #     self.tokenizer.pad_token = self.tokenizer.eos_token
         #     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
-        prompt_ids = self.tokenizer(prompts).input_ids
+        prompt_ids = self.tokenizer(prompts, return_tensors="pt").input_ids
 
         if self.tokenizer.pad_token_id == self.tokenizer.eos_token_id:
             for input_id in prompt_ids:
@@ -65,7 +65,7 @@ class FeatureAlignmentDataset(Dataset):
             batch_first=True,
             padding_value=self.tokenizer.pad_token_id
         )
-        answer_ids = self.tokenizer(answers)
+        answer_ids = self.tokenizer(answers, return_tensors="pt")
         answer_ids = torch.nn.utils.rnn.pad_packed_sequence(
             answer_ids,
             batch_first=True,
