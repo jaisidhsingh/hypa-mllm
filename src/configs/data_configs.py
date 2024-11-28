@@ -11,7 +11,8 @@ data_configs.pretraining_dataset_configs = {
         "annotations_path": f"{data_configs.global_data_folder}/tinyllava_558k/blip_laion_cc_sbu_558k.json",
         "image_token": "<image>",
         "transform": None,
-        "tokenizer": None 
+        "tokenizer": None,
+        "device": None 
     },
     "val": {} # TODO: add cc-3m 300k here as the val set.
 }

@@ -8,7 +8,7 @@ from src.configs.tokenizer_configs import tokenizer_configs
 
 
 class FeatureAlignmentDataset(Dataset):
-    def __init__(self, image_folder, annotations_path, image_token, transform=None, tokenizer=None):
+    def __init__(self, image_folder, annotations_path, image_token, transform=None, tokenizer=None, device=None):
         self.image_folder = image_folder 
         with open(annotations_path) as f:
             annotations = json.load(f)
@@ -19,6 +19,7 @@ class FeatureAlignmentDataset(Dataset):
         self.transform = transform
         self.tokenizer = tokenizer
         self.image_token = image_token
+        self.device = device
 
     def __len__(self):
         return len(self.image_paths)
@@ -83,11 +84,14 @@ class FeatureAlignmentDataset(Dataset):
             for input_id in prompt_ids:
                 input_id[input_id == tokenizer_configs.alt_ignore_index] = self.tokenizer.eos_token_id
         
+        if self.device is None:
+            self.device = "cpu"
+        
         batch = {
-            "input_ids": prompt_ids,
-            "images": torch.stack(images),
-            "attention_mask": attention_mask,
-            "labels": answer_ids,
-            "image_positions": torch.tensor(image_positions).long()
+            "input_ids": prompt_ids.to(self.device),
+            "images": torch.stack(images).to(self.device),
+            "attention_mask": attention_mask.to(self.device),
+            "labels": answer_ids.to(self.device),
+            "image_positions": torch.tensor(image_positions).long().to(self.device)
         }
         return batch
