@@ -59,7 +59,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--experiment_mllm", type=str, default="mllm_training_test_0")
+    parser.add_argument("--experiment_name", type=str, default="mllm_training_test_0")
     parser.add_argument("--experiment_type", type=str, default="mllm")
     parser.add_argument("--train_log_folder", type=str, default="../../logs")
     parser.add_argument("--num_epochs", type=int, default=1)
