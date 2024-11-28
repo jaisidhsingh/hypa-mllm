@@ -5,6 +5,7 @@ from torch import Tensor
 from typing import *
 
 from src.model.model_utils import load_llm, load_vision_tower, load_connector
+from src.configs.tokenizer_configs import tokenizer_configs
 
 
 class MLLM(nn.Module):
@@ -97,33 +98,27 @@ class MLLM(nn.Module):
             )
         
         text_embeddings = self.llm.get_input_embeddings()(input_ids)
-        print(text_embeddings.shape)
-        print(projected_image_features.shape)
-
 
         combined_embeddings = torch.zeros((batch_size, num_patches+seq_len, text_embeddings.shape[-1])).to(self.device)
+
         combined_embeddings[image_first_mask, :, :] = torch.cat([
             projected_image_features[image_first_mask, :, :], 
             text_embeddings[image_first_mask, :, :]
         ], dim=1)
+
         combined_embeddings[image_last_mask, :, :] = torch.cat([
             text_embeddings[image_last_mask, :, :],
             projected_image_features[image_last_mask, :, :]
         ], dim=1)
 
-        print(combined_embeddings.shape)
-        print(combined_attention_mask.shape)
-
-        # combined_embeddings = torch.where(
-        #     image_first_mask.unsqueeze(-1),
-        #     torch.cat([projected_image_features, text_embeddings], dim=1),
-        #     torch.cat([text_embeddings, projected_image_features], dim=1)
-        # )
+        _labels = torch.full((batch_size, combined_embeddings.shape[1]), fill_value=tokenizer_configs.ignore_index, dtype=torch.long, device=self.device)
+        _labels[:, -labels.shape[1]:] = labels
+        print(_labels.shape)
 
         outputs = self.llm(
             inputs_embeds=combined_embeddings,
             attention_mask=combined_attention_mask,
-            labels=labels,
+            labels=_labels,
             return_dict=True
         )
         return outputs
