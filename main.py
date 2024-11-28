@@ -27,7 +27,7 @@ def main(args):
     model.train()
 
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
-    scaler = torch.GradScaler(args.device)
+    scaler = torch.cuda.amp.GradScaler()
     autocast = torch.amp.autocast
 
     train_dataset_config = data_configs.pretraining_dataset_configs["train"]
