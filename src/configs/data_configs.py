@@ -12,7 +12,6 @@ data_configs.pretraining_dataset_configs = {
         "image_token": "<image>",
         "transform": None,
         "tokenizer": None,
-        "device": None 
     },
     "val": {} # TODO: add cc-3m 300k here as the val set.
 }
