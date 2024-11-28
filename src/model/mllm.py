@@ -20,9 +20,9 @@ class MLLM(nn.Module):
         ) -> None:
         super().__init__()
         self.device = device
-        self.llm, self.tokenizer = load_llm(llm, device=self.device)
+        self.llm = load_llm(llm, device=self.device)
 
-        self.vision_tower, self.image_transform, self.vision_tower_config = load_vision_tower(vision_tower, self.device)
+        self.vision_tower, self.vision_tower_config = load_vision_tower(vision_tower, self.device)
         self.num_patches = self.get_num_patches_for_vision_tower()
 
         vision_tower_dim = self.vision_tower.embed_dim
