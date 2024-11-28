@@ -8,9 +8,6 @@ from transformers import Trainer
 
 
 class TrainerForMLLM(Trainer):
-    def __init__(self, recipe, **kwargs):
-        self.recipe = recipe
-    
     def create_optimizer(self):
         opt_params = self.model.get_trainable_params()
             
