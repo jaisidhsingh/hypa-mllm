@@ -23,7 +23,7 @@ def main(args):
         connector_hidden_dims=[],
         device=args.device
     )
-    model = torch.compile(model)
+    # model = torch.compile(model)
     model.train()
 
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
