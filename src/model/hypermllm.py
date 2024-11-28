@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn as nn
 from torch import Tensor
@@ -7,7 +8,14 @@ from typing import *
 from src.model.model_utils import load_llm, load_vision_tower, load_connector
 
 
-class MLLM(nn.Module):
+class HyperNetMLLM(nn.Module):
+    """
+    Does not have a `self.connector` attribute.
+    Instead, uses `self.hypernetwork` to predict
+    the weight and bias for the modality-connection layer.
+
+    TODO: Adapt this correctly, currently just a copy-paste of `MLLM`.
+    """
     def __init__(
         self, 
         llm: str, 
@@ -36,7 +44,7 @@ class MLLM(nn.Module):
     
     @torch.no_grad()
     def get_num_patches_for_vision_tower(self):
-        image = torch.randn(1, *self.vision_tower_config["input_size"]).to(self.device)
+        image = torch.randn(1, *self.vision_tower_config["input_size"]).to(self.vision_tower.device)
         features = self.vision_tower.forward_features(image)
         return features.shape[1]
 
@@ -108,3 +116,4 @@ class MLLM(nn.Module):
             return_dict=True
         )
         return outputs
+ 

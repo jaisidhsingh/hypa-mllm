@@ -28,7 +28,8 @@ def main(args):
     wandb.init(project=args.experiment_type, entity="hyperalignment", config=vars(args))
 
     total_steps = math.ceil(len(train_dataset) / args.batch_size) * args.num_epochs
-    train_log_folder = os.join(args.train_log_folder, args.experiment_name)
+    train_log_folder = os.path.join(args.train_log_folder, args.experiment_name)
+    os.makedirs(train_log_folder, exist_ok=True)
 
     training_args = TrainingArguments(
         output_dir=train_log_folder,
