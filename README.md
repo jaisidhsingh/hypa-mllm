@@ -11,8 +11,8 @@ Llama-3.2-1B and Qwen-2.5-1.5B loaded together take 14GB of VRAM.
 - [x] Write `src/model/model_tests.py`
 - [x] Test `src/model/model_tests.py`
 - [x] Test `data/alignment_datasets.py`
-- [x] Write `src/training/trainers.py`
-- [ ] Test `src/training/trainers.py`
-- [ ] Write `src/training/train_mllm.py`
-- [ ] Test `src/training/train_mllm.py`
-- [ ] Resolve all bugs
+- [x] Write `src/training/trainers.py` -tmp
+- [x] Test `src/training/trainers.py` -tmp
+- [x] Write `src/training/train_mllm.py` -tmp
+- [x] Test `src/training/train_mllm.py` -tmp
+- [x] Resolve all bugs
