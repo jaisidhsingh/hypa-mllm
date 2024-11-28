@@ -95,6 +95,9 @@ class MLLM(nn.Module):
             )
         
         text_embeddings = self.llm.get_input_embeddings()(input_ids)
+        print(text_embeddings.shape)
+        print(projected_image_features.shape)
+
         combined_embeddings = torch.where(
             image_first_mask.unsqueeze(-1),
             torch.cat([projected_image_features, text_embeddings], dim=1),
