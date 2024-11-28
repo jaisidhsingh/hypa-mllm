@@ -88,6 +88,6 @@ class FeatureAlignmentDataset(Dataset):
             "images": torch.stack(images),
             "attention_mask": attention_mask,
             "labels": answer_ids,
-            "image_positions": torch.stack(image_positions)
+            "image_positions": torch.tensor(image_positions).long()
         }
         return batch
