@@ -12,9 +12,6 @@ from src.configs.data_configs import data_configs
 
 
 def main(args):
-    train_dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs["train"])
-    # val_dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs["val"])
-
     model = MLLM(
         llm="llama-3.2",
         vision_tower="vanilla_vit_b16",
@@ -23,6 +20,10 @@ def main(args):
         device=args.device
     )
     model.train()
+
+    train_dataset_config = data_configs.pretraining_dataset_configs["train"]
+    train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer})
+    train_dataset = FeatureAlignmentDataset(train_dataset_config)
 
     wandb.login(key="de80fd57553b311eb0e3b3d71e72fe38d9b3524c")
     wandb.init(project=args.experiment_type, entity="hyperalignment", name=args.experiment_name, config=vars(args))
