@@ -69,7 +69,7 @@ class FeatureAlignmentDataset(Dataset):
         answer_ids = self.tokenizer(answers).input_ids
         answer_ids = [torch.tensor(ai).long() for ai in answer_ids]
 
-        answer_ids = torch.nn.utils.rnn.pad_packed_sequence(
+        answer_ids = torch.nn.utils.rnn.pad_sequence(
             answer_ids,
             batch_first=True,
             padding_value=tokenizer_configs.ignore_index
