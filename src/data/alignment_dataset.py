@@ -50,9 +50,9 @@ class FeatureAlignmentDataset(Dataset):
         answers = [item[1][1] for item in batch]
         image_positions = [item[2] for item in batch]
 
-        # if self.tokenizer.pad_token is None:
-        #     self.tokenizer.pad_token = self.tokenizer.eos_token
-        #     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+        if self.tokenizer.pad_token is None or self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
         prompt_ids = self.tokenizer(prompts).input_ids
         prompt_ids = [torch.tensor(pi).long() for pi in prompt_ids]
