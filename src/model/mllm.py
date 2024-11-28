@@ -111,9 +111,13 @@ class MLLM(nn.Module):
             projected_image_features[image_last_mask, :, :]
         ], dim=1)
 
-        _labels = torch.full((batch_size, combined_embeddings.shape[1]), fill_value=tokenizer_configs.ignore_index, dtype=torch.long, device=self.device)
+        _labels = torch.full(
+            (batch_size, combined_embeddings.shape[1]), 
+            fill_value=tokenizer_configs.ignore_index, 
+            dtype=torch.long, 
+            device=self.device
+        )
         _labels[:, -labels.shape[1]:] = labels
-        print(_labels.shape)
 
         outputs = self.llm(
             inputs_embeds=combined_embeddings,

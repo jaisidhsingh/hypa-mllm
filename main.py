@@ -26,10 +26,13 @@ def main(args):
     train_dataset = FeatureAlignmentDataset(**train_dataset_config)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=train_dataset.collate_fn)
 
-    batch = next(iter(train_loader))
-    output = model(**batch)
-    print(output.keys())
-
+    for i in range(4):
+        batch = next(iter(train_loader))
+        output = model(**batch)
+        print(output.loss)
+        print(output.logits.shape)
+    
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
