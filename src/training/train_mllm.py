@@ -24,7 +24,8 @@ def main(args):
     )
     model.train()
 
-    wandb.init(project=args.experiment_type, config=vars(args))
+    wandb.login(key="de80fd57553b311eb0e3b3d71e72fe38d9b3524c")
+    wandb.init(project=args.experiment_type, entity="hyperalignment", config=vars(args))
 
     total_steps = math.ceil(len(train_dataset) / args.batch_size) * args.num_epochs
     train_log_folder = os.join(args.train_log_folder, args.experiment_name)
