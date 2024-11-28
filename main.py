@@ -1,8 +1,10 @@
 import os
 import math
+import torch
 import wandb
 import argparse
 import warnings
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 from transformers import TrainingArguments, Trainer
 
@@ -22,20 +24,27 @@ def main(args):
         device=args.device
     )
     model.train()
+    optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
 
     train_dataset_config = data_configs.pretraining_dataset_configs["train"]
     train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer, "device": args.device})
     train_dataset = FeatureAlignmentDataset(**train_dataset_config)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=train_dataset.collate_fn)
-    train_loader = iter(train_loader)
 
-    for i in range(4):
-        batch = next(train_loader)
-        print(batch["input_ids"])
-        
+    bar = tqdm(total=len(train_loader))
+    for batch in train_loader:
+        optimizer.zero_grad()
         output = model(**batch)
-        print(output.loss)
-        print(output.logits.shape)
+
+        loss = output.loss
+        perplexity = torch.exp(torch.tensor(loss.item()))
+
+        loss.backward()
+        optimizer.step()
+
+        bar.set_postfix({"perplexity": perplexity})
+        bar.update(1)
+
     
 
 if __name__ == "__main__":
