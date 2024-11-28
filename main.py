@@ -23,8 +23,12 @@ def main(args):
         connector_hidden_dims=[],
         device=args.device
     )
+    model = torch.compile(model)
     model.train()
+
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
+    scaler = torch.amp.GradScaler()
+    autocast = torch.amp.autocast
 
     train_dataset_config = data_configs.pretraining_dataset_configs["train"]
     train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer, "device": args.device})
@@ -34,15 +38,18 @@ def main(args):
     bar = tqdm(total=len(train_loader))
     for batch in train_loader:
         optimizer.zero_grad()
-        output = model(**batch)
 
-        loss = output.loss
+        with autocast():
+            output = model(**batch)
+            loss = output.loss
+        
         perplexity = torch.exp(torch.tensor(loss.item()))
 
-        loss.backward()
-        optimizer.step()
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
-        bar.set_postfix({"perplexity": perplexity})
+        bar.set_postfix({"perplexity": perplexity.item()})
         bar.update(1)
 
     
