@@ -36,7 +36,7 @@ class MLLM(nn.Module):
     
     @torch.no_grad()
     def get_num_patches_for_vision_tower(self):
-        image = torch.randn(1, *self.vision_tower_config["input_size"])
+        image = torch.randn(1, *self.vision_tower_config["input_size"]).to(self.device)
         features = self.vision_tower.forward_features(image)
         return features.shape[1]
 
@@ -147,9 +147,6 @@ class HyperNetMLLM(nn.Module):
     @torch.no_grad()
     def get_num_patches_for_vision_tower(self):
         image = torch.randn(1, *self.vision_tower_config["input_size"]).to(self.vision_tower.device)
-        print(image.shape, image.device, self.vision_tower.device)
-        print(self.vision_tower_config)
-    
         features = self.vision_tower.forward_features(image)
         return features.shape[1]
 
