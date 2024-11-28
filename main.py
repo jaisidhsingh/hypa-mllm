@@ -27,11 +27,12 @@ def main(args):
     train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer, "device": args.device})
     train_dataset = FeatureAlignmentDataset(**train_dataset_config)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=train_dataset.collate_fn)
+    train_loader = iter(train_loader)
 
     for i in range(4):
+        batch = next(train_loader)
         print(batch["input_ids"])
         
-        batch = next(iter(train_loader))
         output = model(**batch)
         print(output.loss)
         print(output.logits.shape)
