@@ -22,7 +22,7 @@ def main(args):
     model.train()
 
     train_dataset_config = data_configs.pretraining_dataset_configs["train"]
-    train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer})
+    train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer, "device": args.device})
     train_dataset = FeatureAlignmentDataset(**train_dataset_config)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=train_dataset.collate_fn)
 
