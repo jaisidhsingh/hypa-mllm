@@ -13,7 +13,7 @@ from src.configs.data_configs import data_configs
 
 def main(args):
     train_dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs["train"])
-    val_dataset = FeatureAlignmentDataset(**data_configs.pretrained_dataset_configs["val"])
+    # val_dataset = FeatureAlignmentDataset(**data_configs.pretraining_dataset_configs["val"])
 
     model = MLLM(
         llm="llama-3.2",
@@ -45,7 +45,7 @@ def main(args):
         model=model,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=val_dataset,
+        # eval_dataset=val_dataset,
         data_collator=train_dataset.collate_fn
     )
     
