@@ -30,8 +30,8 @@ class FeatureAlignmentDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image) 
 
-        answer = self.answers[idx]
         prompt = self.prompts[idx]
+        answer = self.answers[idx]
 
         image_position = prompt.index(self.image_token)
         if image_position == len(prompt) - len(self.image_token):
@@ -55,9 +55,7 @@ class FeatureAlignmentDataset(Dataset):
         #     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
         prompt_ids = self.tokenizer(prompts).input_ids
-        print(type(prompt_ids))
-        print(len(prompt_ids))
-        print(prompt_ids[0])
+        prompt_ids = [torch.tensor(pi).long() for pi in prompt_ids]
 
         if self.tokenizer.pad_token_id == self.tokenizer.eos_token_id:
             for input_id in prompt_ids:
@@ -69,6 +67,8 @@ class FeatureAlignmentDataset(Dataset):
             padding_value=self.tokenizer.pad_token_id
         )
         answer_ids = self.tokenizer(answers).input_ids
+        answer_ids = [torch.tensor(ai).long() for ai in answer_ids]
+
         answer_ids = torch.nn.utils.rnn.pad_packed_sequence(
             answer_ids,
             batch_first=True,
