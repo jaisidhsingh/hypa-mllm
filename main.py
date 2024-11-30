@@ -68,7 +68,7 @@ def main(args):
         logs["train_loss"].append(loss.item())
 
         perplexity = torch.exp(torch.tensor(loss.item()))
-        perplexity = round(perplexity, 3)
+        perplexity = round(perplexity.item(), 3)
         logs["train_ppl"].append(perplexity)
 
         scaler.scale(loss).backward()
