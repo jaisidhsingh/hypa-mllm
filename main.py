@@ -57,26 +57,26 @@ def main(args):
     bar = tqdm(total=len(train_loader))
     logs = {"steps": [0], "train_loss": [0], "train_ppl": [0]}
 
-    # for idx, batch in enumerate(train_loader):
-    #     optimizer.zero_grad()
+    for idx, batch in enumerate(train_loader):
+        optimizer.zero_grad()
 
-    #     with autocast:
-    #         output = model(**batch)
-    #         loss = output.loss
+        with autocast:
+            output = model(**batch)
+            loss = output.loss
         
-    #     logs["steps"].append(idx+1)
-    #     logs["train_loss"].append(loss.item())
+        logs["steps"].append(idx+1)
+        logs["train_loss"].append(loss.item())
 
-    #     perplexity = torch.exp(torch.tensor(loss.item()))
-    #     perplexity = round(perplexity, 3)
-    #     logs["train_ppl"].append(perplexity)
+        perplexity = torch.exp(torch.tensor(loss.item()))
+        perplexity = round(perplexity, 3)
+        logs["train_ppl"].append(perplexity)
 
-    #     scaler.scale(loss).backward()
-    #     scaler.step(optimizer)
-    #     scaler.update()
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
-    #     bar.set_postfix({"perplexity": perplexity.item()})
-    #     bar.update(1)
+        bar.set_postfix({"perplexity": perplexity.item()})
+        bar.update(1)
     
     bar.close()
     
