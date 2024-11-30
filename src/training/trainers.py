@@ -17,3 +17,22 @@ class TrainerForMLLM(Trainer):
             weight_decay=self.args.weight_decay
         )
         return self.optimizer
+
+
+class MLLMTrainer(object):
+    def __init__(
+            self, 
+            args, 
+            model, 
+            optimizer,
+            train_dataset,
+            eval_dataset, 
+            collator,
+            logging_type="wandb",
+            scheduler="linear_warmup_with_cosine_decay"
+        ):
+        self.args = args
+        self.device = args.device
+        self.model = model
+        self.optimizer = optimizer
+

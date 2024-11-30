@@ -2,7 +2,7 @@ import torch
 from src.configs.tokenizer_configs import tokenizer_configs
 
 
-class DataCollator():
+class DataCollator(object):
     def __init__(self, tokenizer, device):
         self.tokenizer = tokenizer
         self.device = device
