@@ -75,7 +75,7 @@ def main(args):
         scaler.step(optimizer)
         scaler.update()
 
-        bar.set_postfix({"perplexity": perplexity.item()})
+        bar.set_postfix({"perplexity": perplexity})
         bar.update(1)
     
     bar.close()
