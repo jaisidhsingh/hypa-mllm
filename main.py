@@ -1,12 +1,32 @@
+import os
 import torch
 import argparse
 import warnings
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
 from src.model import MLLM
 from src.data import load_pretraining_dataset
 warnings.simplefilter("ignore")
+
+
+def plot_metrics(metrics, name):
+    fig, axes = plt.subplots((1, 2))
+    axes[0].plot(metrics["steps"], metrics["train_loss"], label="train_loss")
+    axes[0].set_xlabel("Steps")
+    axes[0].set_ylabel("Train Loss")
+    axes[0].set_title("Training loss over time")
+    axes[0].legend()
+
+    axes[1].plot(metrics["steps"], metrics["train_ppl"], label="train_perplexity")
+    axes[1].set_xlabel("Steps")
+    axes[1].set_ylabel("Train perplexity")
+    axes[1].set_title("Training perplexity over time")
+    axes[1].legend()
+
+    plt.tight_layout()
+    plt.savefig(f"{name}.png")
 
 
 def main(args):
@@ -35,29 +55,46 @@ def main(args):
     print(" ")
 
     bar = tqdm(total=len(train_loader))
-    for batch in train_loader:
-        optimizer.zero_grad()
+    logs = {"steps": [0], "train_loss": [0], "train_ppl": [0]}
 
-        with autocast:
-            output = model(**batch)
-            loss = output.loss
+    # for idx, batch in enumerate(train_loader):
+    #     optimizer.zero_grad()
+
+    #     with autocast:
+    #         output = model(**batch)
+    #         loss = output.loss
         
-        perplexity = torch.exp(torch.tensor(loss.item()))
+    #     logs["steps"].append(idx+1)
+    #     logs["train_loss"].append(loss.item())
 
-        scaler.scale(loss).backward()
-        scaler.step(optimizer)
-        scaler.update()
+    #     perplexity = torch.exp(torch.tensor(loss.item()))
+    #     perplexity = round(perplexity, 3)
+    #     logs["train_ppl"].append(perplexity)
 
-        bar.set_postfix({"perplexity": perplexity.item()})
-        bar.update(1)
+    #     scaler.scale(loss).backward()
+    #     scaler.step(optimizer)
+    #     scaler.update()
+
+    #     bar.set_postfix({"perplexity": perplexity.item()})
+    #     bar.update(1)
+    
+    bar.close()
+    
+    plot_metrics(logs, args.experiment_name)
+    logs["config"] = vars(args)
+    torch.save(logs, os.path.join(args.train_log_folder, f"{args.experiment_name}.pt"))
+    
+    torch.save({"model": model.state_dict(), "optimizer": optimizer.state_dict()}, os.path.join(args.ckpt_folder, f"{args.experiment_name}.pt"))
+    print("Saved model checkpoint and logs.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--experiment_name", type=str, default="mllm_training_test_0")
+    parser.add_argument("--experiment_name", type=str, default="vanilla_vit-llama_3x2_1b-linear-cc558k")
     parser.add_argument("--experiment_type", type=str, default="mllm")
-    parser.add_argument("--train_log_folder", type=str, default="../../logs")
+    parser.add_argument("--train_log_folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa-mllm/logs")
+    parser.add_argument("--ckpt_folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa-mllm/checkpoints")
     
     parser.add_argument("--num_epochs", type=int, default=1)
     parser.add_argument("--batch_size", type=int, default=4)

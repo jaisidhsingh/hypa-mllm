@@ -2,7 +2,12 @@
 
 ## Notes
 
+### Single GPU trials:
+
 Llama-3.2-1B and Qwen-2.5-1.5B loaded together take 14GB of VRAM.
+
+Connector training takes 6 hours for LLama-3.2-1B (max `batch_size=32` on 44GB VRAM).
+Connector+LLM training takes 9 hours for LLama-3.2-1B (max `batch_size=16` on 44GB VRAM). 
 
 ## Todos
 
