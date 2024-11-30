@@ -10,6 +10,7 @@ warnings.simplefilter("ignore")
 
 
 def main(args):
+    modules_to_freeze=args.modules_to_freeze.split(",")
     model = MLLM(
         llm=args.llm_name,
         vision_tower=args.vision_tower_name,
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--llm_name", type=str, default="llama-3.2")
     parser.add_argument("--vision_tower_name", type=str, default="vanilla_vit_b16")
     parser.add_argument("--connector_type", type=str, default="linear")
+    parser.add_argument("--modules_to_freeze", type=str, default="vision_tower,llm")
 
     args = parser.parse_args()
     main(args)
