@@ -10,23 +10,29 @@ warnings.simplefilter("ignore")
 
 
 def main(args):
+    print("Initialising model...")
     modules_to_freeze=args.modules_to_freeze.split(",")
     model = MLLM(
         llm=args.llm_name,
         vision_tower=args.vision_tower_name,
         connector_type=args.connector_type,
         connector_hidden_dims=[],
-        modules_to_freeze=["vision_tower"],
+        modules_to_freeze=modules_to_freeze,
         device=args.device
     )
     model.train()
+    print("Model loaded.")
+    print(" ")
 
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
     scaler = torch.cuda.amp.GradScaler()
     autocast = torch.amp.autocast(args.device)
 
+    print("Loading datasets...")
     train_dataset, collator = load_pretraining_dataset(args, split="train")
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=collator)
+    print("Datasets loaded.")
+    print(" ")
 
     bar = tqdm(total=len(train_loader))
     for batch in train_loader:
