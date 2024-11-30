@@ -15,6 +15,7 @@ def main(args):
         vision_tower=args.vision_tower_name,
         connector_type=args.connector_type,
         connector_hidden_dims=[],
+        modules_to_freeze=["vision_tower"],
         device=args.device
     )
     model.train()
