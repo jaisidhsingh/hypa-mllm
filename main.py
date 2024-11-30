@@ -12,7 +12,7 @@ warnings.simplefilter("ignore")
 
 
 def plot_metrics(metrics, name):
-    fig, axes = plt.subplots((1, 2))
+    fig, axes = plt.subplots(1, 2)
     axes[0].plot(metrics["steps"], metrics["train_loss"], label="train_loss")
     axes[0].set_xlabel("Steps")
     axes[0].set_ylabel("Train Loss")
