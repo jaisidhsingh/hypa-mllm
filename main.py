@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
 from src.model import MLLM
-from src.data import load_pretraining_dataset
+from src.data import load_pretraining_dataset, cast_batch_to_device
 warnings.simplefilter("ignore")
 
 
@@ -64,6 +64,7 @@ def main(args):
     logs = {"steps": [0], "train_loss": [0], "train_ppl": [0]}
 
     for idx, batch in enumerate(train_loader):
+        batch = cast_batch_to_device(batch, args.device)
         optimizer.zero_grad()
 
         with autocast:

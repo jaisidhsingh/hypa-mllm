@@ -3,9 +3,8 @@ from src.configs.tokenizer_configs import tokenizer_configs
 
 
 class DataCollator(object):
-    def __init__(self, tokenizer, device):
+    def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.device = device
     
     def __call__(self, batch):
         """
@@ -53,10 +52,10 @@ class DataCollator(object):
             self.device = "cpu"
         
         batch = {
-            "input_ids": prompt_ids.to(self.device),
-            "images": torch.stack(images).to(self.device),
-            "attention_mask": attention_mask.to(self.device),
-            "labels": answer_ids.to(self.device),
-            "image_positions": torch.tensor(image_positions).long().to(self.device)
+            "input_ids": prompt_ids,
+            "images": torch.stack(images),
+            "attention_mask": attention_mask,
+            "labels": answer_ids,
+            "image_positions": torch.tensor(image_positions).long()
         }
         return batch

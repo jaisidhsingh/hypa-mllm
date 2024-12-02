@@ -12,6 +12,13 @@ def load_pretraining_dataset(args, split="train"):
     dataset_config.update({"transform": transform})
 
     dataset = FeatureAlignmentDataset(**dataset_config)
-    collator = DataCollator(**{"tokenizer": tokenizer, "device": args.device})
+    collator = DataCollator(**{"tokenizer": tokenizer})
 
     return dataset, collator
+
+
+def cast_batch_to_device(batch, device):
+    for k, v in batch.items():
+        batch[k] = v.to(device)
+    
+    return batch
