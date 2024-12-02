@@ -1,4 +1,5 @@
 import os
+import wandb
 import torch
 import argparse
 import warnings
@@ -50,10 +51,15 @@ def main(args):
 
     print("Loading datasets...")
     train_dataset, collator = load_pretraining_dataset(args, split="train")
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=collator)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collator)
     print("Datasets loaded.")
     print(" ")
 
+    if args.use_wandb:
+        wandb.login(key="de80fd57553b311eb0e3b3d71e72fe38d9b3524c")
+        wandb.init(project=args.experiment_type, entity="hyperalignment", name=args.experiment_name, config=vars(args))
+        print("Loaded wandb logging.")
+    
     bar = tqdm(total=len(train_loader))
     logs = {"steps": [0], "train_loss": [0], "train_ppl": [0]}
 
@@ -75,9 +81,15 @@ def main(args):
         scaler.step(optimizer)
         scaler.update()
 
-        bar.set_postfix({"perplexity": perplexity})
+        if args.use_wandb:
+            wandb.log({"train_ppl": perplexity, "train_loss": logs["train_loss"][-1]}, step=idx)
+
+        bar.set_postfix({"perplexity": perplexity, "train_loss": logs["train_loss"][-1]})
         bar.update(1)
-    
+
+    if args.use_wandb:    
+        wandb.finish()
+
     bar.close()
     
     plot_metrics(logs, args.experiment_name)
@@ -95,10 +107,12 @@ if __name__ == "__main__":
     parser.add_argument("--experiment_type", type=str, default="mllm")
     parser.add_argument("--train_log_folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa-mllm/logs")
     parser.add_argument("--ckpt_folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa-mllm/checkpoints")
+    parser.add_argument("--use_wandb", type=bool, default=False)
     
     parser.add_argument("--num_epochs", type=int, default=1)
-    parser.add_argument("--batch_size", type=int, default=4)
-    parser.add_argument("--learning_rate", type=float, default=3e-4)
+    parser.add_argument("--num_workers", type=int, default=4)
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--learning_rate", type=float, default=1e-3)
 
     parser.add_argument("--llm_name", type=str, default="llama-3.2")
     parser.add_argument("--vision_tower_name", type=str, default="vanilla_vit_b16")
