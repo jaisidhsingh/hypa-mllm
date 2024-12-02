@@ -12,7 +12,9 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-mllm/main.py"
 
 module load anaconda/3
 
-conda activate sparse
+conda activate /home/mila/s/sparsha.mishra/.conda/envs/sparse
+
+ulimit -Sn $(ulimit -Hn)
 
 python3 pyfile \
     --batch_size=32 \
