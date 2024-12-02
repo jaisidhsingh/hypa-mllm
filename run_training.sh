@@ -17,6 +17,7 @@ conda activate /home/mila/s/sparsha.mishra/.conda/envs/sparse
 ulimit -Sn $(ulimit -Hn)
 
 python3 pyfile \
+    --random_seed=0 \
     --batch_size=32 \
     --learning_rate=1e-3 \
     --num_workers=8 \

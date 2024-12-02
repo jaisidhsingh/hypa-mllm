@@ -31,6 +31,8 @@ def plot_metrics(metrics, name):
 
 
 def main(args):
+    torch.manual_seed(args.random_seed)
+
     print("Initialising model...")
     modules_to_freeze=args.modules_to_freeze.split(",")
     model = MLLM(
@@ -43,7 +45,6 @@ def main(args):
     )
     model.train()
     print("Model loaded.")
-    print(" ")
 
     optimizer = torch.optim.AdamW(model.get_trainable_params(), lr=args.learning_rate)
     scaler = torch.cuda.amp.GradScaler()
@@ -53,7 +54,6 @@ def main(args):
     train_dataset, collator = load_pretraining_dataset(args, split="train")
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collator)
     print("Datasets loaded.")
-    print(" ")
 
     if args.use_wandb:
         wandb.login(key="de80fd57553b311eb0e3b3d71e72fe38d9b3524c")
@@ -110,6 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--ckpt_folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa-mllm/checkpoints")
     parser.add_argument("--use_wandb", type=bool, default=False)
     
+    parser.add_argument("--random_seed", type=int, default=0)
     parser.add_argument("--num_epochs", type=int, default=1)
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--batch_size", type=int, default=32)
