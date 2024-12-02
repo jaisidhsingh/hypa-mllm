@@ -48,9 +48,6 @@ class DataCollator(object):
             for input_id in prompt_ids:
                 input_id[input_id == tokenizer_configs.alt_ignore_index] = self.tokenizer.eos_token_id
         
-        if self.device is None:
-            self.device = "cpu"
-        
         batch = {
             "input_ids": prompt_ids,
             "images": torch.stack(images),
