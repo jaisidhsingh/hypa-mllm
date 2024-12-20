@@ -25,7 +25,7 @@ def main(args):
     train_dataset_config.update({"transform": model.image_transform, "tokenizer": model.tokenizer})
     train_dataset = FeatureAlignmentDataset(**train_dataset_config)
 
-    wandb.login(key="de80fd57553b311eb0e3b3d71e72fe38d9b3524c")
+    wandb.login(key="xyz")
     wandb.init(project=args.experiment_type, entity="hyperalignment", name=args.experiment_name, config=vars(args))
 
     total_steps = math.ceil(len(train_dataset) / args.batch_size) * args.num_epochs
